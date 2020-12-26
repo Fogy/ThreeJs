@@ -1,0 +1,107 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>基础结构</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="target-densitydpi=640,width=640,user-scalable=no" name="viewport">
+    <meta content="no" name="apple-touch-fullscreen">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="no" name="apple-mobile-web-app-capable">
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="../Js/three.js"></script>
+    <script src="http://j.fly-ad.cn/jquery-1.8.2.min.js"></script>
+    <!--<script src="http://j.fly-ad.cn/common-1.0.0.1/common.js"></script>-->
+    <!-- 辅助工具 开始 -->
+    <!--<script src="http://j.fly-ad.cn/3d/stats.js"></script>
+    <script src="http://j.fly-ad.cn/3d/dat.gui.js"></script>-->
+    <!-- 辅助工具 结束 -->
+
+    <script src="/Js/threeJS-common.js"></script>
+    <link href="http://c.fly-ad.cn/common-1.0.0.css" rel="stylesheet" />
+
+    <!-- 动画库 -->
+    <script src="../Js/tween.min.js"></script>
+</head>
+<body style="overflow:hidden;position:fixed;">
+    <div id="renderitem"></div>
+    <script>
+        var scene, camera, renderer;
+        var plane, ball;
+        var tween, tweenback, initpoint;
+        $(function () {
+
+            x3d.CreateBasic();
+            scene = x3d.Settings.scene;
+            camera = x3d.Settings.camera;
+            renderer = x3d.Settings.renderer;
+
+            x3d.CreateAxes();
+
+            // 平面
+            var planegeo = new THREE.PlaneBufferGeometry(20, 33);
+            var texture = THREE.ImageUtils.loadTexture("/images/planebg.jpg");
+            var planemat = new THREE.MeshPhongMaterial({
+                color: 0xffffff,
+                map: texture
+            });
+
+            plane = new THREE.Mesh(planegeo, planemat);
+            scene.add(plane);
+
+            // 小球
+            var sphoeregeo = new THREE.SphereGeometry(0.3, 20, 20);
+            var textureball = THREE.ImageUtils.loadTexture("/images/ball.png");
+            var shperemat = new THREE.MeshPhongMaterial({
+                color: 0xffffff, //0xa2c903
+                map: textureball,
+            });
+
+            ball = new THREE.Mesh(sphoeregeo, shperemat);
+            ball.position.set(0, -10, 0);
+            scene.add(ball);
+
+            var spotlight = new THREE.SpotLight(0xffffff);
+            spotlight.position.set(-30, 40, 80);
+            scene.add(spotlight);
+
+            camera.position.set(0, 0, 38);
+            camera.lookAt(scene.position);
+
+            $("#renderitem").append(renderer.domElement);
+            DoAnimate();
+            EventBinder();
+        });
+        function EventBinder() {
+            $(window).on("touchend", function () {
+                Move(3, 25, 20, 500);
+            });
+        }
+        function DoAnimate() {
+            // do ani
+            TWEEN.update();
+            renderer.render(scene, camera);
+            requestAnimationFrame(DoAnimate);
+        }
+        // endX: x轴落点偏移量
+        // moveY: y轴移动距离
+        // flyheight: 小球飞行最大高度，建议20
+        // time: 飞行时间,单位ms
+        function Move(endX, moveY, flyheight, time) {
+            initpoint = { angelX: 0, ty: 0, angelY: 0 };
+            tween = new TWEEN.Tween(initpoint).to({ angelX: 0.5, ty: parseInt(moveY / 2), angelY: 1 }, time).easing(TWEEN.Easing.Linear.None);
+            tweenback = new TWEEN.Tween(initpoint).to({ angelX: 1, ty: moveY, angelY: 0 }, time).easing(TWEEN.Easing.Linear.None);
+            tween.onUpdate(spheremove);
+            tweenback.onUpdate(spheremove);
+            tween.chain(tweenback);
+
+            tween.start();
+            function spheremove() {
+                var x = this.angelX * endX;
+                var y = this.ty - 10;
+                var z = Math.sin(Math.PI / 2 * this.angelY) * flyheight;
+                ball.position.set(x, y, z);
+            }
+        }
+    </script>
+</body>
+</html>

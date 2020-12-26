@@ -1,0 +1,182 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>粒子流动与组合</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="target-densitydpi=640,width=640,user-scalable=no" name="viewport">
+    <meta content="no" name="apple-touch-fullscreen">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="no" name="apple-mobile-web-app-capable">
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="../Js/three.js"></script>
+    <script src="http://j.fly-ad.cn/jquery-1.8.2.min.js"></script>
+    <script src="http://j.fly-ad.cn/common-1.0.0.1/common.js"></script>
+    <script src="../Js/libs/CSS3DRenderer.js"></script>
+    <script src="../Js/tween.min.js"></script>
+
+    <!-- 辅助工具 开始 -->
+    <script src="http://j.fly-ad.cn/3d/stats.js"></script>
+    <script src="http://j.fly-ad.cn/3d/dat.gui.js"></script>
+    <!-- 辅助工具 结束 -->
+
+    <script src="/Js/threeJS-common.js"></script>
+    <link href="http://c.fly-ad.cn/common-1.0.0.css" rel="stylesheet" />
+    <style>
+        #css3drenderitem .number {
+            padding: 20px;
+        }
+    </style>
+</head>
+<body style="overflow:hidden;background-color:#000">
+    <div id="renderitem" style="position:absolute;left:0;top:0;z-index:1;"></div>
+    <div id="css3drenderitem" style="position:absolute;left:0;top:0;z-index:2;"></div>
+    <script>
+        var scene, camera, renderer, css3drenderer;
+        var sphere;
+        var xobject;
+        var objects = [];
+        var target = { sphere: [], xo: [] };
+        var usermove;
+        $(function () {
+            css3drenderer = new THREE.CSS3DRenderer();
+            x3d.CreateBasic();
+            scene = x3d.Settings.scene;
+            camera = x3d.Settings.camera;
+            renderer = x3d.Settings.renderer = css3drenderer;
+
+            x3d.CreateAxes();
+
+
+            var spheregeo = new THREE.SphereGeometry(50, 15, 15);
+            var spheremat = new THREE.MeshLambertMaterial({ color: 0xff0000, wireframe: true });
+            sphere = new THREE.Mesh(spheregeo, spheremat);
+            //scene.add(cube);
+
+            var xgeo = new THREE.CylinderGeometry(40, 20, 80, 15, 15, true);
+            var xmat = new THREE.MeshLambertMaterial({ color: 0xff0000, wireframe: true });
+            xobject = new THREE.Mesh(xgeo, xmat);
+
+            // sphere
+            var vector = new THREE.Vector3();
+            for (var i = 0; i < spheregeo.vertices.length; i++) {
+                var element = document.createElement('div');
+                element.className = 'element';
+                element.style.backgroundColor = 'rgba(' + parseInt(Math.random() * 255) + ',' + parseInt(Math.random() * 255) + ',' + parseInt(Math.random() * 255) + ',' + (Math.random() * 0.5 + 0.25) + ')';
+
+                var number = document.createElement('div');
+                number.className = 'number';
+                number.textContent = i + 1;
+                element.appendChild(number);
+
+                var o = new THREE.CSS3DObject(element);
+                o.scale.set(0.1, 0.1, 0.1);
+                o.position.x = spheregeo.vertices[i].x;
+                o.position.y = spheregeo.vertices[i].y;
+                o.position.z = spheregeo.vertices[i].z;
+                scene.add(o);
+                vector.copy(o.position).multiplyScalar(2);
+                o.lookAt(vector);
+                objects.push(o);
+
+                var so = new THREE.Object3D();
+                so.position.x = o.position.x;
+                so.position.y = o.position.y;
+                so.position.z = o.position.z;
+
+                vector.copy(so.position).multiplyScalar(2);
+                so.lookAt(vector);
+                target.sphere.push(so);
+            }
+
+            // xo
+            for (var i = 0; i < objects.length; i++) {
+                var o = new THREE.Object3D();
+                o.position.x = xgeo.vertices[i].x + 14;
+                o.position.y = xgeo.vertices[i].y + 0;
+                o.position.z = xgeo.vertices[i].z + 14;
+
+                target.xo.push(o);
+            }
+
+            var spotlight = new THREE.PointLight(0xffffff);
+            spotlight.position.set(-30, 40, 80);
+            scene.add(spotlight);
+
+            camera.position.set(70, 70, 70);
+            camera.lookAt(scene.position);
+
+            $("#renderitem").append(renderer.domElement);
+
+            //css3drenderer
+
+            css3drenderer.setSize(window.innerWidth, window.innerHeight);
+            css3drenderer.domElement.style.position = 'absolute';
+            css3drenderer.domElement.style.top = 0;
+            document.getElementById('css3drenderitem').appendChild(css3drenderer.domElement);
+
+            usermove = x3d.RotateSceneByUserForMobile();
+
+            DoAnimate();
+            Change();
+            window.addEventListener('resize', onWindowResize, false);
+
+        });
+        function DoAnimate() {
+            // do ani
+            scene.rotation.x += 0.006;
+            scene.rotation.y += 0.006;
+            scene.rotation.z += 0.006;
+            //sphere.rotation.x += 0.01;
+            //renderer.render(scene, camera);
+            css3drenderer.render(scene, camera);
+            usermove.update();
+            TWEEN.update();
+            requestAnimationFrame(DoAnimate);
+        }
+        function transform(targets, duration) {
+
+            TWEEN.removeAll();
+
+            for (var i = 0; i < objects.length; i++) {
+
+                var object = objects[i];
+                var target = targets[i];
+
+                new TWEEN.Tween(object.position)
+                    .to({ x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration)
+                    .easing(TWEEN.Easing.Exponential.InOut)
+                    .start();
+
+                new TWEEN.Tween(object.rotation)
+                    .to({ x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration)
+                    .easing(TWEEN.Easing.Exponential.InOut)
+                    .start();
+
+            }
+
+            //new TWEEN.Tween(this)
+            //    .to({}, duration * 2)
+            //    .onUpdate(renderer)
+            //    .start();
+
+        }
+        function Change() {
+            setTimeout(function () {
+                transform(target.xo, 1000);
+                setTimeout(function () {
+                    transform(target.sphere, 1000);
+                    Change();
+                }, 2000);
+            }, 2000);
+        }
+        function onWindowResize() {
+
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+        }
+    </script>
+</body>
+</html>

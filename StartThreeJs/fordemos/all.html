@@ -1,0 +1,130 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>乐享飞扬</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="target-densitydpi=640,width=640,user-scalable=no" name="viewport">
+    <meta content="no" name="apple-touch-fullscreen">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="no" name="apple-mobile-web-app-capable">
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="http://j.fly-ad.cn/jquery-1.8.2.min.js"></script>
+    <script src="http://j.fly-ad.cn/common-1.0.0.1/common.js"></script>
+    <link href="http://c.fly-ad.cn/common-1.0.0.css" rel="stylesheet" />
+    <style>
+        .top {
+            width: 640px;
+            height: 200px;
+            background-color: #eee;
+            font-size: 60px;
+            color: #ffffff;
+            line-height: 200px;
+            text-align: center;
+        }
+
+        .procon {
+            padding: 10px;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+            .procon li {
+                padding-top: 20px;
+                padding-bottom: 20px;
+                height: 60px;
+                line-height: 60px;
+                padding-left: 15px;
+                overflow: hidden;
+                border-bottom: 1px dashed #888;
+                font-size: 30px;
+                color:#333;
+            }
+
+                .procon li:nth-child(2n) {
+                    background-color: #efefef;
+                }
+
+        .leftarea {
+            width: 200px;
+            height: 200px;
+            overflow: hidden;
+            border: 8px solid #ccc;
+            margin-left: 20px;
+            float: left;
+        }
+
+        .thumbpic {
+            height: 200px;
+            width: 200px;
+        }
+
+        .rightarea {
+            padding: 10px;
+            float: right;
+            width: 350px;
+            height: 200px;
+            font-size: 24px;
+            line-height: 40px;
+            color: #888;
+        }
+
+        .bold {
+            font-weight: bold;
+            font-size: 28px;
+            padding-bottom: 10px;
+            display: inline-block;
+            border-bottom: 1px dashed #ccc;
+            width: 370px;
+            color: #666;
+        }
+
+        .right {
+            float: right;
+            margin-right: 30px;
+        }
+    </style>
+</head>
+<body style="position:fixed;width:640px;">
+    <div id="container">
+        <div class="top" style="box-shadow: 0px 1px 10px #333;">
+            <img src="http://i.fly-ad.cn/logo_s.png" style="width:200px;float:left;margin-left:80px;"/> 
+            <span style="font-size: 60px; margin-left: -100px; color: #bbb; text-shadow: 4px 4px 1px #ffffff; ">案例分享</span>
+        </div>
+        <ul class="procon">
+            <li href="http://case.fly-ad.cn/">
+                ∷  游戏 <span class="right">>></span>
+            </li>
+            <li href="http://case.fly-ad.cn/1.html">
+                ∷  场景模拟<span class="right">>></span>
+            </li>
+            <li href="http://case.fly-ad.cn/2.html">
+                ∷  问答/评分/测试<span class="right">>></span>
+            </li>
+            <li href="http://case.fly-ad.cn/3.html">
+                ∷  礼物/贺卡/邀请函<span class="right">>></span>
+            </li>
+            <li href="http://case.fly-ad.cn/4.html">
+                ∷  图文/其他<span class="right">>></span>
+            </li>
+            <li href="http://h.fly-ad.cn/demos/3d/index.html?v=1">
+                ∷  3D Demos<span class="right">>></span>
+            </li>
+            <li href="http://h.fly-ad.cn/demos/2d/index.html?v=1">
+                ∷  2D Demos<span class="right">>></span>
+            </li>
+        </ul>
+    </div>
+    <script>
+        var ww, wh;
+        $(function () {
+            ww = $(window).width();
+            wh = $(window).height();
+            $(".procon").css({ "height": wh - 220 + "px" });
+            $(".procon li").click(function () {
+                var href = $(this).attr("href");
+                window.location.href = href;
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>几何体</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="target-densitydpi=640,width=640,user-scalable=no" name="viewport">
+    <meta content="no" name="apple-touch-fullscreen">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="no" name="apple-mobile-web-app-capable">
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="../Js/three.js"></script>
+    <script src="http://j.fly-ad.cn/jquery-1.8.2.min.js"></script>
+    <script src="http://j.fly-ad.cn/common-1.0.0.1/common.js"></script>
+
+    <!-- 辅助工具 开始 -->
+    <script src="http://j.fly-ad.cn/3d/stats.js"></script>
+    <script src="http://j.fly-ad.cn/3d/dat.gui.js"></script>
+    <!-- 辅助工具 结束 -->
+
+    <script src="/Js/threeJS-common.js"></script>
+    <link href="http://c.fly-ad.cn/common-1.0.0.css" rel="stylesheet" />
+</head>
+<body style="overflow:hidden;">
+    <div id="renderitem"></div>
+    <script>
+        var scene, camera, renderer;
+        var plane, circle;
+        var definedline;
+        var stat;
+        $(function () {
+            stat = x3dextension.InitState("#renderitem");
+            x3d.CreateBasic();
+            scene = x3d.Settings.scene;
+            camera = x3d.Settings.camera;
+            renderer = x3d.Settings.renderer;
+
+
+            x3d.CreateAxes();
+
+            //平面
+            var planeGeo = new THREE.PlaneBufferGeometry(40, 40, 12, 12);
+            var planeMat = new THREE.MeshNormalMaterial({ color: 0x0000ff });
+            var planebMat = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
+            var plantMultiMat = [planeMat, planebMat];
+            plane = new THREE.SceneUtils.createMultiMaterialObject(planeGeo, plantMultiMat);
+            //plane.rotation.x = -Math.PI / 2;
+            plane.position.set(0, 0, 5);
+            plane.children[0].material.side = THREE.DoubleSide;
+            scene.add(plane);
+
+            // 原形
+            var circleGeo = new THREE.CircleGeometry(40, 12, 12, Math.PI * 4 / 3);
+            var circleMat = new THREE.MeshNormalMaterial({ color: 0x0000ff });
+            var circlebMat = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
+            var circleMultiMat = [circleMat, circlebMat];
+            circle = new THREE.SceneUtils.createMultiMaterialObject(circleGeo, circleMultiMat);
+            circle.position.set(0, 0, -5);
+            scene.add(circle);
+
+
+            // 自定义图形
+            var shape = crateGeo();
+            var userdefinedGeo = new THREE.ShapeGeometry(shape);
+            var userdefinedMat = new THREE.MeshNormalMaterial({ color: 0xff0000 });
+            var userdefinedBasMat = new THREE.MeshBasicMaterial({ color: 0x000000, wireframe: true });
+            var userdefinedMatary = [userdefinedMat, userdefinedBasMat];
+            var userdeined = new THREE.SceneUtils.createMultiMaterialObject(userdefinedGeo, userdefinedMatary);
+            userdeined.children[0].material.side = THREE.DoubleSide;
+            userdeined.position.set(10, 10, 20);
+            scene.add(userdeined);
+
+            // 使用自定义图形的shape绘制线条
+            definedline = new THREE.Line(shape.createPointsGeometry(10), new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 2 }));
+            definedline.position.set(10, 10, 42);
+            scene.add(definedline);
+
+            // 使用自定义图形的shape绘制线条
+            //var definedline2 = new THREE.Line(shape.createSpacedPointsGeometry(102), new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 8 }));
+            //definedline2.position.set(10, 10, 52);
+            //scene.add(definedline2);
+
+            // 圆形
+            var sphereGeo = new THREE.SphereGeometry(18, 10, 10, 0, Math.PI * 1.65, Math.PI / 4, Math.PI * 0.5);
+            var sphereMat = new THREE.MeshNormalMaterial({ color: 0xffff00 });
+            var sphereMatwire = new THREE.MeshBasicMaterial({ wireframe: true });
+            var spherematary = [sphereMat, sphereMatwire];
+            var sphere = new THREE.SceneUtils.createMultiMaterialObject(sphereGeo, spherematary);
+            sphereMat.side = THREE.DoubleSide;
+            sphere.position.set(-80, 10, 10);
+            scene.add(sphere);
+
+            //中空柱形
+            var cylinderGeo = new THREE.CylinderGeometry(20, 0, 15, 10, 10, false);
+            var cylinder = CreateMesh(cylinderGeo);
+            cylinder.position.set(0, 0, -40);
+            scene.add(cylinder);
+
+            var cylinderGeo2 = new THREE.CylinderGeometry(0, 20, 15, 10, 10, true);
+            var cylinder2 = CreateMesh(cylinderGeo2);
+            cylinder2.position.set(0, 20, -40);
+            cylinder2.rotation.x = Math.PI / 4;
+            scene.add(cylinder2);
+
+            // 圆环
+            var torusGeo = new THREE.TorusGeometry(15, 4, 10, 8, Math.PI);
+            var torus = CreateMesh(torusGeo);
+            torus.position.set(0, -50, 0);
+            torus.rotation.z = Math.PI / 4;
+            scene.add(torus);
+
+            // 纽节 p=20,q=8 时 可创造错误复杂的五角星图形
+            var torusknotGeo = new THREE.TorusKnotGeometry(15, 2, 50, 8, 20, 8, 2);
+            var torusknot = CreateMesh(torusknotGeo);
+            torusknot.position.set(-60, -50, 0);
+            torusknot.rotation.x = Math.PI * 0.8;
+            scene.add(torusknot);
+
+            // 聚光灯
+            var spotlight = new THREE.SpotLight(0xffffff);
+            spotlight.position.set(20, 100, 80);
+            scene.add(spotlight);
+
+            camera.position.set(-30, 50, 290);
+            camera.lookAt(scene.position);
+
+            $('#renderitem').append(renderer.domElement);
+            DoAnimate();
+        });
+        function DoAnimate() {
+            stat.update();
+            x3d.RotateSceneByWorldAres(0.01);
+            renderer.render(scene, camera);
+            requestAnimationFrame(DoAnimate);
+        }
+        function CreateMesh(geo) {
+            var material1 = new THREE.MeshNormalMaterial({ color: 0xeeeeee });
+            var material2 = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
+            material1.side = THREE.DoubleSide;
+            return new THREE.SceneUtils.createMultiMaterialObject(geo, [material1, material2]);
+        }
+        function crateGeo() {
+            var shape = new THREE.Shape();
+            shape.moveTo(10, 10);
+            shape.lineTo(20, 30);
+            shape.bezierCurveTo(20, 10, 20, 10, 40, 20);
+            shape.splineThru([
+                new THREE.Vector2(50, 40),
+                new THREE.Vector2(30, 80),
+                new THREE.Vector2(0, 40)
+            ]);
+            shape.quadraticCurveTo(-20, 30, 10, 10);
+
+            // eye1
+            var hole = new THREE.Path();
+            hole.absellipse(20, 60, 2, 2, 0, Math.PI * 2, true);
+            shape.holes.push(hole);
+
+            var hole2 = new THREE.Path();
+            hole2.absellipse(35, 60, 2, 2, 0, Math.PI * 2, true);
+            shape.holes.push(hole2);
+
+            // mouse
+            var mouse = new THREE.Shape();
+            mouse.absarc(28, 50, 4, 0, -Math.PI, true);
+            shape.holes.push(mouse);
+            return shape;
+        }
+    </script>
+</body>
+</html>

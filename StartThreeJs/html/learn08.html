@@ -1,0 +1,131 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>使用CanvasRenderer</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="target-densitydpi=640,width=640,user-scalable=no" name="viewport">
+    <meta content="no" name="apple-touch-fullscreen">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="no" name="apple-mobile-web-app-capable">
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="../Js/three.js"></script>
+    <script src="http://j.fly-ad.cn/jquery-1.8.2.min.js"></script>
+    <script src="http://j.fly-ad.cn/common-1.0.0.1/common.js"></script>
+
+    <!-- 辅助工具 开始 -->
+    <script src="http://j.fly-ad.cn/3d/stats.js"></script>
+    <script src="http://j.fly-ad.cn/3d/dat.gui.js"></script>
+    <!-- 辅助工具 结束 -->
+    <!-- 使用 CanvasRenderer，需要用到 CanvasRenderer 和 Projctor -->
+    <script src="../Js/libs/CanvasRenderer.js"></script>
+    <script src="../Js/libs/Projector.js"></script>
+
+    <script src="/Js/threeJS-common.js"></script>
+    <link href="http://c.fly-ad.cn/common-1.0.0.css" rel="stylesheet" />
+</head>
+<body style="overflow:hidden;">
+    <div id="renderitem"></div>
+    <script>
+        var scene, camera, renderer;
+        var cube;
+        var srotate;
+        $(function () {
+            x3d.CreateBasic();
+            scene = x3d.Settings.scene;
+            camera = x3d.Settings.camera;
+            renderer = x3d.CreateCanvasRender();
+            x3d.Settings.renderer = renderer;
+
+            x3d.CreateAxes();
+
+            var cubegeo = new THREE.BoxGeometry(3, 3, 3);
+            var cubemat = new THREE.MeshLambertMaterial({ color: 0x00ffff });
+            cube = new THREE.Mesh(cubegeo, cubemat);
+            scene.add(cube);
+
+            CreateSprites(100);
+
+            var spotlight = new THREE.SpotLight(0xffffff);
+            spotlight.position.set(0, 0, 80);
+            scene.add(spotlight);
+
+            camera.position.set(0, 0, 280);
+            camera.lookAt(scene.position);
+
+            srotate = x3d.RotateSceneByUserForMobile();
+            srotate.autoRotate = true;
+            srotate.autoRotateSpeed = -srotate.autoRotateSpeed;
+
+            $("#renderitem").append(renderer.domElement);
+            DoAnimate();
+        });
+        function DoAnimate() {
+            // do ani
+            // x3d.RotateSceneByWorldAres(0.01);
+
+            srotate.update();
+            cube.rotation.x += 0.01;
+            renderer.render(scene, camera);
+            requestAnimationFrame(DoAnimate);
+        }
+        function CreateSprites(num) {
+            var mat = new THREE.SpriteCanvasMaterial({
+                program: getTexture,
+                color: 0xffffff
+            });
+            var radius = 280;
+            for (var i = 0; i < num; i++) {
+                var sprit = new THREE.Sprite(mat);
+                sprit.position.set(Math.random() * radius - radius / 2, Math.random() * radius - radius / 2, 0);
+                sprit.scale.set(0.1, 0.1, 0.1);
+                scene.add(sprit);
+            }
+        }
+        var getTexture = function (ctx) {
+
+            // the body
+            ctx.translate(-81, -84);
+
+            ctx.fillStyle = "orange";
+            ctx.beginPath();
+            ctx.moveTo(83, 116);
+            ctx.lineTo(83, 102);
+            ctx.bezierCurveTo(83, 94, 89, 88, 97, 88);
+            ctx.bezierCurveTo(105, 88, 111, 94, 111, 102);
+            ctx.lineTo(111, 116);
+            ctx.lineTo(106.333, 111.333);
+            ctx.lineTo(101.666, 116);
+            ctx.lineTo(97, 111.333);
+            ctx.lineTo(92.333, 116);
+            ctx.lineTo(87.666, 111.333);
+            ctx.lineTo(83, 116);
+            ctx.fill();
+
+            // the eyes
+            ctx.fillStyle = "white";
+            ctx.beginPath();
+            ctx.moveTo(91, 96);
+            ctx.bezierCurveTo(88, 96, 87, 99, 87, 101);
+            ctx.bezierCurveTo(87, 103, 88, 106, 91, 106);
+            ctx.bezierCurveTo(94, 106, 95, 103, 95, 101);
+            ctx.bezierCurveTo(95, 99, 94, 96, 91, 96);
+            ctx.moveTo(103, 96);
+            ctx.bezierCurveTo(100, 96, 99, 99, 99, 101);
+            ctx.bezierCurveTo(99, 103, 100, 106, 103, 106);
+            ctx.bezierCurveTo(106, 106, 107, 103, 107, 101);
+            ctx.bezierCurveTo(107, 99, 106, 96, 103, 96);
+            ctx.fill();
+
+            // the pupils
+            ctx.fillStyle = "blue";
+            ctx.beginPath();
+            ctx.arc(101, 102, 2, 0, Math.PI * 2, true);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(89, 102, 2, 0, Math.PI * 2, true);
+            ctx.fill();
+
+        };
+    </script>
+</body>
+</html>

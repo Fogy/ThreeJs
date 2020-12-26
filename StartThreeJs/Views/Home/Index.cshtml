@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    var scene, camera, renderer;
+    $(function () {
+        x3d.CreateBasic();
+        scene = x3d.Settings.scene;
+        camera = x3d.Settings.camera;
+        renderer = x3d.Settings.renderer;
+
+        x3d.CreateAxes(scene);;
+
+        var planeGeometry = new THREE.PlaneGeometry(60, 20, 1, 1);
+        var planeMeterial = new THREE.MeshBasicMaterial({ color: 0xcccccc });
+        var plane = new THREE.Mesh(planeGeometry, planeMeterial);
+        plane.position = new THREE.Vector3(15, 0, 0);
+        plane.rotation.x = -0.5 * Math.PI;
+        scene.add(plane);
+
+        camera.position = new THREE.Vector3(-30, 40, 30);
+        camera.lookAt(scene.position);
+        $("#renderitem").append(renderer.domElement);
+        renderer.render(scene, camera);
+        // 更多详见 html/learn01.html
+    });
+</script>

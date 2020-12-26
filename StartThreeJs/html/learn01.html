@@ -1,0 +1,222 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>Index</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="target-densitydpi=640,width=640,user-scalable=no" name="viewport">
+    <meta content="no" name="apple-touch-fullscreen">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="no" name="apple-mobile-web-app-capable">
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="../Js/three.js"></script>
+    <script src="http://j.fly-ad.cn/jquery-1.8.2.min.js"></script>
+    <script src="http://j.fly-ad.cn/common-1.0.0.1/common.js"></script>
+
+    <!-- 辅助工具 开始 -->
+    <script src="http://j.fly-ad.cn/3d/stats.js"></script>
+    <script src="http://j.fly-ad.cn/3d/dat.gui.js"></script>
+    <!-- 辅助工具 结束 -->
+
+    <script src="/Js/threeJS-common.js"></script>
+    <link href="http://c.fly-ad.cn/common-1.0.0.css" rel="stylesheet" />
+</head>
+<body style="overflow:hidden;">
+    <div id="renderitem"></div>
+    <script>
+        var scene, camera, renderer;
+        var cube, circle, plane, facescube;
+        var circlespeed = 0.01;
+        var cubespeed = 0.02;
+        var camera_radius = 0;
+        var stats; // 帧频或者渲染时间 检测
+        $(function () {
+            stats = x3dextension.InitState("#renderitem", 0);
+            AddGUI();
+
+            //
+            x3d.CreateBasic();
+            scene = x3d.Settings.scene;
+            camera = x3d.Settings.camera;
+            renderer = x3d.Settings.renderer;
+            renderer.shadowMapEnabled = true;
+            x3d.CreateAxes(scene);
+
+            var planeGeometry = new THREE.PlaneBufferGeometry(60, 40, 1, 1);
+            var planeMeterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+            plane = new THREE.Mesh(planeGeometry, planeMeterial);
+            plane.position.set(0, 0, 0);
+            plane.rotation.x = -0.5 * Math.PI;
+            scene.add(plane);
+
+            var cubeGemetry = new THREE.BoxGeometry(4, 4, 4);
+            var cubeMeterial = new THREE.MeshPhongMaterial({ color: 0xff0000/*, wireframe: true */ });
+            cube = new THREE.Mesh(cubeGemetry, cubeMeterial);
+            cube.name = "cube0";
+            cube.position.set(-4, 2, 0);
+            scene.add(cube);
+
+            // faceMaterial 的cube
+            var Material_array = [];
+            Material_array.push(new THREE.MeshBasicMaterial({ color: 0xff0000 }));
+            Material_array.push(new THREE.MeshBasicMaterial({ color: 0xffff00 }));
+            Material_array.push(new THREE.MeshBasicMaterial({ color: 0x00ff00 }));
+            Material_array.push(new THREE.MeshBasicMaterial({ color: 0x0000ff }));
+            Material_array.push(new THREE.MeshBasicMaterial({ color: 0xff0f0f }));
+            Material_array.push(new THREE.MeshBasicMaterial({ color: 0x00ffff }));
+
+            var facebox = new THREE.BoxGeometry(4, 4, 4);
+            var faceboxMeterial = new THREE.MeshFaceMaterial(Material_array);
+            facebox = new THREE.Mesh(facebox, faceboxMeterial);
+            facebox.position.x = -15;
+            facebox.position.y = 2;
+            scene.add(facebox);
+            facebox.receiveShadow = true; // 没有投影
+
+            // 方块组
+            var magicbox = new THREE.BoxGeometry(2.9, 2.9, 2.9);
+            var group = new THREE.Mesh();
+            for (var x = 0; x < 3; x++) {
+                for (var y = 0; y < 3; y++) {
+                    for (var z = 0; z < 3; z++) {
+                        var mcube = new THREE.Mesh(magicbox, faceboxMeterial);
+                        mcube.position.set(x * 3, y * 3, z * 3);
+                        group.add(mcube);
+                    }
+                }
+            }
+
+            scene.add(group);
+            group.position.x = 10;
+            group.position.y = 10;
+            group.receiveShadow = true; // 没有投影
+
+            var circleGeo = new THREE.SphereGeometry(4, 20, 20);
+            var circleMate = new THREE.MeshLambertMaterial({ color: 0x00ff00/*, wireframe: true*/ });
+            circle = new THREE.Mesh(circleGeo, circleMate);
+            circle.position.set(8, 4, 0);
+            scene.add(circle);
+
+            var spotlight = new THREE.SpotLight(0xffffff);
+            spotlight.position.set(-40, 60, -10);
+            scene.add(spotlight);
+
+            // 添加环境光，增色
+            var amlight = new THREE.AmbientLight(0x007700);
+            amlight.position.set(-40, 60, -10); // 环境光不需要指定位置，该行代码无效
+            // scene.add(amlight);
+
+            cube.castShadow = true;
+            cube.receiveShadow = true;
+            circle.castShadow = true;
+            plane.receiveShadow = true;
+            spotlight.castShadow = true;
+
+            camera.position.set(30, 40, 80);
+            camera.lookAt(scene.position);
+
+            // 相机绕Y轴旋转时的旋转半径
+            camera_radius = Math.sqrt(Math.abs(camera.position.x) * Math.abs(camera.position.x) + Math.abs(camera.position.z) * Math.abs(camera.position.z));
+
+            scene.fog = new THREE.Fog(0xffffff, 35, 200);
+            $("#renderitem").append(renderer.domElement);
+            DoAnimate();
+        });
+        function DoAnimate() {
+            stats.update();
+
+            circlespeed += 0.01;
+            circle.position.x = Math.cos(circlespeed) * 10;
+            circle.position.y = Math.sin(circlespeed) * 10;
+
+            cubespeed += 0.03;
+
+            //scene.traverse(function (e) {
+            //    if (e instanceof THREE.Mesh && e != plane && e != circle) {
+            //        e.rotation.x = cubespeed;
+            //        e.rotation.y = cubespeed;
+            //        e.rotation.z = cubespeed;
+            //    }
+            //});
+
+            cube.scale.set(controls.缩放方块, 1, 1);
+
+            // 若绕y轴旋转,则设置相机x,z轴的位置，最大长度为 x，z的斜边长度
+            camera.position.x = Math.sin(circlespeed) * camera_radius;
+            camera.position.z = Math.cos(circlespeed) * camera_radius;
+            camera.lookAt(scene.position);
+            renderer.render(scene, camera);
+            requestAnimationFrame(DoAnimate);
+        }
+    </script>
+    <script>
+        var controls;
+        function AddGUI() {
+            controls = new function () {
+                this.添加方块 = function () {
+                    var cubeSize = Math.ceil(3 * Math.random());
+                    var cubeG = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+                    var cubeM = new THREE.MeshLambertMaterial({ color: Math.random() * 0xffffff });
+                    var cube = new THREE.Mesh(cubeG, cubeM);
+                    cube.name = "cube-" + scene.children.length;
+
+                    cube.castShadow = true;
+                    cube.position.set(-30 + Math.round(Math.random() * 60), cubeSize / 2, -20 + Math.round(Math.random() * 40));
+                    scene.add(cube);
+                };
+
+                this.移除方块 = function () {
+                    var lastobject = scene.children[scene.children.length - 1];
+                    if (lastobject instanceof THREE.Mesh) {
+                        scene.remove(lastobject);
+                        this.对象数量 = scene.children.length;
+                    } else {
+                        alert("没有可移除的对象");
+                    }
+                }
+
+                this.对象数量 = function () {
+                    console.log("当前对象数量为:" + scene.children.length + "个");
+                }
+
+                this.输出所有对象 = function () {
+                    console.log(scene.children);
+                }
+
+                this.重置方块对象材质与颜色 = function () {
+                    //scene.overrideMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+                    scene.overrideMaterial = new THREE.MeshDepthMaterial();
+                }
+
+                this.克隆方块 = function () {
+                    var cloneG = cube.geometry.clone();
+                    var meterials = [new THREE.MeshLambertMaterial({ color: 0xff0000 }), new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true })];
+                    var clonedCube = new THREE.SceneUtils.createMultiMaterialObject(cloneG, meterials);
+                    clonedCube.name = "clonedCube";
+                    console.log(clonedCube.name);
+                    // 此时场景中并没有 clonedCube 对象，移除是没有意义的。另，移除clonedCube,并不是销毁clonedCube.
+                    // 由于该特定情境下，clonedCube 的名称是不变的，将在场景中添加多个同名的对象，而getChildByName只能获取最后add的场景对象，因此此处有必要做删除操作，否则其他名称为 clonedCube 场景对象，只能通过scene.children[index] 获取，这种方式获取到的对象，存在不确定性。
+                    scene.remove(scene.getObjectByName("clonedCube"));
+                    // 上一步，没有销毁 clonedCube，因此此处仍然可以往场景中加入clonedCube.
+                    scene.add(clonedCube);
+                    clonedCube.translateX(5 + Math.round(Math.random() * 5));
+                    clonedCube.translateZ(5 + Math.round(Math.random() * 5));
+                    clonedCube.position.y = cube.position.y;
+                    clonedCube.children[1].translateX(2); // clonedCube 是包含两个对象的集合
+                    clonedCube = null; // 若要释放对象，设置该对象为null，该对象将会被认定为垃圾对象，在一定情况下，将触发GC。
+                }
+
+                this.缩放方块 = 1;
+            }
+
+            var gui = new dat.GUI();
+            gui.add(controls, '添加方块');
+            gui.add(controls, '移除方块');
+            gui.add(controls, '对象数量');
+            gui.add(controls, '输出所有对象');
+            gui.add(controls, '重置方块对象材质与颜色');
+            gui.add(controls, "克隆方块");
+            gui.add(controls, "缩放方块", 0.1, 4);
+        }
+    </script>
+</body>
+</html>

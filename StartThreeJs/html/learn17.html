@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>STLLoader，CTMLoader</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="target-densitydpi=640,width=640,user-scalable=no" name="viewport">
+    <meta content="no" name="apple-touch-fullscreen">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="no" name="apple-mobile-web-app-capable">
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="../Js/three.js"></script>
+    <script src="http://j.fly-ad.cn/jquery-1.8.2.min.js"></script>
+    <script src="http://j.fly-ad.cn/common-1.0.0.1/common.js"></script>
+
+    <!-- 辅助工具 开始 -->
+    <script src="http://j.fly-ad.cn/3d/stats.js"></script>
+    <script src="http://j.fly-ad.cn/3d/dat.gui.js"></script>
+    <!-- 辅助工具 结束 -->
+
+    <script src="/Js/threeJS-common.js"></script>
+    <link href="http://c.fly-ad.cn/common-1.0.0.css" rel="stylesheet" />
+
+    <!-- 附加库 -->
+    <script src="../Js/libs/STLLoader.js"></script>
+    <!--  -->
+    <script src="../Js/libs/CTMLoader.js"></script>
+    <script src="../Js/libs/CTMWorker.js"></script>
+    <script src="../Js/libs/ctm.js"></script>
+    <script src="../Js/libs/lzma.js"></script>
+    <!--  -->
+    <script src="../Js/libs/VTKLoader.js"></script>
+</head>
+<body style="overflow:hidden;">
+    <div id="renderitem"></div>
+    <script>
+        var scene, camera, renderer;
+        var cube;
+        var head, wheel, moai;
+        $(function () {
+            x3d.CreateBasic();
+            scene = x3d.Settings.scene;
+            camera = x3d.Settings.camera;
+            renderer = x3d.Settings.renderer;
+
+            x3d.CreateAxes();
+
+
+
+            x3d.LoadModelFromSTL_WithLambertMaterial("../Assets/SolidHead_2_lowPoly_42k.stl", function (o) {
+                head = o;
+                head.rotation.x = -0.5 * Math.PI;
+                x3d.SetCenterOfGeometry(head.geometry, -46, -76, -46);
+                head.position.set(10, 20, 30);
+                head.scale.set(0.1, 0.1, 0.1);
+            });
+
+            x3d.LoadModelFromCTM_WithLambertMaterial("../Assets/auditt_wheel.ctm", function (o) {
+                wheel = o;
+                wheel.rotation.x = -Math.PI / 2;
+                wheel.scale.set(25, 25, 25);
+            })
+
+            x3d.LoadModelFromVTK_WithLambertMaterial("../Assets/moai_fixed.vtk", function (o) {
+                moai = o;
+                moai.scale.set(20, 20, 20);
+                moai.position.set(-20, 0, 0);
+            })
+
+            var spotlight = new THREE.SpotLight(0xffffff, 1.4);
+            spotlight.position.set(-30, -40, 170);
+            scene.add(spotlight);
+
+            var spotlight = new THREE.SpotLight(0xffffff, 1.4);
+            spotlight.position.set(60, 80, -170);
+            scene.add(spotlight);
+
+            camera.position.set(30, 40, 80);
+            camera.lookAt(scene.position);
+
+            $("#renderitem").append(renderer.domElement);
+            DoAnimate();
+        });
+        function DoAnimate() {
+            // do ani
+            x3d.RotateSceneByWorldAres(0.01);
+            if (head) {
+                head.rotation.z += 0.01;
+            }
+            if (wheel) {
+                wheel.rotation.y += 0.1;
+            }
+            renderer.render(scene, camera);
+            requestAnimationFrame(DoAnimate);
+        }
+    </script>
+</body>
+</html>

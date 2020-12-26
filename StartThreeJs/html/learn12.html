@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>保存几何体+保存整个场景（无需其他库）</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="target-densitydpi=640,width=640,user-scalable=no" name="viewport">
+    <meta content="no" name="apple-touch-fullscreen">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="no" name="apple-mobile-web-app-capable">
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="../Js/three.js"></script>
+    <script src="http://j.fly-ad.cn/jquery-1.8.2.min.js"></script>
+    <script src="http://j.fly-ad.cn/common-1.0.0.1/common.js"></script>
+
+    <!-- 辅助工具 开始 -->
+    <script src="http://j.fly-ad.cn/3d/stats.js"></script>
+    <script src="http://j.fly-ad.cn/3d/dat.gui.js"></script>
+    <!-- 辅助工具 结束 -->
+
+    <script src="/Js/threeJS-common.js"></script>
+    <link href="http://c.fly-ad.cn/common-1.0.0.css" rel="stylesheet" />
+
+    <!-- 场景保存与还原，可使用x3d.SaveObjectToLocalstorage，而不需要库 -->
+    <script src="../Js/libs/SceneExporter.js"></script>
+    <script src="../Js/libs/SceneLoader.js"></script>
+</head>
+<body style="overflow:hidden;">
+    <div id="renderitem"></div>
+    <script>
+        var scene, camera, renderer;
+        var cube;
+        var stat;
+        var spotlight;
+        $(function () {
+            console.log("SpotLight 不能用于SceneLoader的方式读取");
+            stat = x3dextension.InitState("#renderitem", 0);
+            x3d.CreateBasic();
+            scene = x3d.Settings.scene;
+            camera = x3d.Settings.camera;
+            renderer = x3d.Settings.renderer;
+
+            x3d.CreateAxes();
+
+            var cubegeo = new THREE.BoxGeometry(3, 3, 3);
+            var cubemat = new THREE.MeshLambertMaterial({ color: 0x00ffff });
+            cube = new THREE.Mesh(cubegeo, cubemat);
+            cube.name = "cubex";
+            scene.add(cube);
+
+            spotlight = new THREE.SpotLight(0xffffff);
+            spotlight.position.set(-30, 40, 80);
+            spotlight.name = "spotlight";
+            scene.add(spotlight);
+
+            camera.position.set(30, 40, 80);
+            camera.lookAt(scene.position);
+
+            $("#renderitem").append(renderer.domElement);
+            DoAnimate();
+        });
+        function DoAnimate() {
+            // do ani
+            //x3d.RotateSceneByWorldAres(0.01);
+            stat.update();
+            cube.rotation.x += 0.01;
+            renderer.render(scene, camera);
+            requestAnimationFrame(DoAnimate);
+        }
+        function CreateMesh(geo) {
+            var mat = new THREE.MeshNormalMaterial({ color: 0x00ff00 });
+            var mat2 = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
+            var matary = [mat, mat2];
+            var mesh = new THREE.SceneUtils.createMultiMaterialObject(geo, matary);
+            return mesh;
+        }
+    </script>
+    <script>
+        //control
+        var cubelckey = "cubelc";
+        var scenelckey = "scenelc";
+        var controls = {
+            SaveCubeGeo: function () {
+                x3d.SaveObjectToLocalstorage(cubelckey, cube);
+            },
+            CreateCubeByLC: function () {
+                var mesh = x3d.GetObjectFromLocalstorage(cubelckey)
+                scene.add(mesh);
+                mesh.position.set(Math.random() * 15, Math.random() * 16, Math.random() * 17);
+            },
+            SaveScene: function () {
+                var exporter = new THREE.SceneExporter();
+                var sceneJson = JSON.stringify(exporter.parse(scene));
+                localStorage.setItem(scenelckey, sceneJson);
+            },
+            ClearScene: function () {
+                scene = new THREE.Scene();
+            },
+            LoadSceneByLC: function () {
+                var json = (localStorage.getItem(scenelckey));
+                var sceneLoader = new THREE.SceneLoader();
+
+                sceneLoader.parse(JSON.parse(json), function (e) {
+                    scene = e.scene;
+                }, '.');
+            },
+            SaveSceneWithoutLibs: function () {
+                x3d.SaveObjectToLocalstorage(scenelckey, scene);
+            },
+            GetSceneWithoutLibs: function () {
+                var s = x3d.GetObjectFromLocalstorage(scenelckey);
+                scene = s;
+                // 需要重新设置场景对象,坐标系无法标注颜色（变成白色）
+                cube = scene.getObjectByName('cubex');
+                spotlight = scene.getObjectByName('spotlight');
+            }
+        }
+        var gui = x3dextension.InitGui();
+        gui.add(controls, "SaveCubeGeo");
+        gui.add(controls, "CreateCubeByLC");
+        gui.add(controls, "SaveScene");
+        gui.add(controls, "ClearScene");
+        gui.add(controls, "LoadSceneByLC");
+        gui.add(controls, "SaveSceneWithoutLibs");
+        gui.add(controls, "GetSceneWithoutLibs");
+
+    </script>
+</body>
+</html>

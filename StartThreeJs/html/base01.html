@@ -1,0 +1,115 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>基础结构</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="target-densitydpi=640,width=640,user-scalable=no" name="viewport">
+    <meta content="no" name="apple-touch-fullscreen">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="no" name="apple-mobile-web-app-capable">
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="../Js/three.min.js"></script>
+    <script src="http://j.fly-ad.cn/jquery-1.8.2.min.js"></script>
+    <script src="http://j.fly-ad.cn/common-1.0.0.1/common.js"></script>
+
+    <!-- 辅助工具 开始 -->
+    <script src="http://j.fly-ad.cn/3d/stats.js"></script>
+    <script src="http://j.fly-ad.cn/3d/dat.gui.js"></script>
+    <!-- 辅助工具 结束 -->
+
+    <script src="/Js/threeJS-common.js"></script>
+    <link href="http://c.fly-ad.cn/common-1.0.0.css" rel="stylesheet" />
+</head>
+<body style="overflow:hidden;">
+    <div id="renderitem"></div>
+    <script>
+        var scene, camera, renderer;
+        var cube, plane, smallcube, sphere;
+        $(function () {
+            x3d.CreateBasic();
+            scene = x3d.Settings.scene;
+            camera = x3d.Settings.camera;
+            renderer = x3d.Settings.renderer;
+            renderer.shadowMapEnabled = true;
+
+            x3d.CreateAxes();
+
+            var planegeo = new THREE.PlaneBufferGeometry(20, 30, 20, 30);
+            var planemat = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
+            planemat.side = THREE.DoubleSide;
+            plane = new THREE.Mesh(planegeo, planemat);
+            scene.add(plane);
+
+            plane.rotation.x = -Math.PI / 2;
+
+            var cubegeo = new THREE.BoxGeometry(6, 6, 6, 10, 10, 10);
+            var cubemat = new THREE.MeshLambertMaterial({ color: 0x00ffff, wireframe: true });
+            cube = new THREE.Mesh(cubegeo, cubemat);
+            scene.add(cube);
+            cube.position.set(-10, 6, 0);
+
+            var scubegeo = new THREE.BoxGeometry(2, 2, 2);
+            var scubemat = new THREE.MeshLambertMaterial({ color: 0x00ffff });
+            smallcube = new THREE.Mesh(scubegeo, scubemat);
+            scene.add(smallcube);
+
+            var spheregeo = new THREE.SphereGeometry(5, 10, 10);
+            var spheremat = new THREE.MeshPhongMaterial({ color: 0xeeeeee, wireframe: true });
+            sphere = new THREE.Mesh(spheregeo, spheremat);
+            scene.add(sphere);
+            sphere.position.set(0, 7, 0);
+            sphere.scale.set(2, 2, 2);
+
+            smallcube.position.set(0, 10, 0);
+            smallcube.castShadow = true;
+
+            //cube.receiveShadow = true;
+
+            var spotlight = new THREE.SpotLight(0xffffff);
+            spotlight.position.set(-10, 80, 40);
+            scene.add(spotlight);
+
+            //var spotlight2 = new THREE.SpotLight(0xffffff);
+            //spotlight2.position.set(30, -40, -80);
+            //scene.add(spotlight2);
+
+            // 投影  ,产生方+接受方
+            spotlight.castShadow = true;
+            cube.castShadow = true;
+            plane.receiveShadow = true;
+
+            camera.position.set(10, 40, 40);
+            camera.lookAt(scene.position);
+
+            x3d.Init();
+            smallcube.click("cube_click");
+
+            $("#renderitem").append(renderer.domElement);
+
+            setTimeout(function () {
+                scene.remove(cube);
+            }, 2000);
+
+            setTimeout(function () {
+                scene.add(cube);
+            }, 4000);
+
+            DoAnimate();
+        });
+        function DoAnimate() {
+            // do ani
+            //scene.rotation.x += 0.01;
+            //cube.rotation.x += 0.01;
+            //cube.position.x += 0.01;
+            renderer.render(scene, camera);
+            requestAnimationFrame(DoAnimate);
+        }
+
+        function cube_click() {
+            //smallcube.material.transparent = true;
+            //smallcube.material.opacity = 0.5;
+            smallcube.material = new THREE.MeshNormalMaterial();
+        }
+    </script>
+</body>
+</html>

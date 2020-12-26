@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="target-densitydpi=640,width=640,user-scalable=no" name="viewport">
+    <meta content="no" name="apple-touch-fullscreen">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="no" name="apple-mobile-web-app-capable">
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="http://j.fly-ad.cn/jquery-1.8.2.min.js"></script>
+    <script src="http://j.fly-ad.cn/common-1.0.0.1/common.js"></script>
+    <link href="http://c.fly-ad.cn/common-1.0.0.css" rel="stylesheet" />
+    <style>
+        .top {
+            width: 640px;
+            height: 200px;
+            background-color: #0094ff;
+            font-size: 60px;
+            color: #ffffff;
+            line-height: 200px;
+            text-align: center;
+        }
+
+        .procon {
+            padding: 10px;
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+            .procon li {
+                padding-top: 20px;
+                padding-bottom: 20px;
+                overflow: hidden;
+                border-bottom: 1px dashed #888;
+            }
+
+                .procon li:nth-child(2n) {
+                    background-color: #efefef;
+                }
+
+        .leftarea {
+            width: 200px;
+            height: 200px;
+            overflow: hidden;
+            border: 8px solid #ccc;
+            margin-left: 20px;
+            float: left;
+        }
+
+        .thumbpic {
+            height: 200px;
+            width: 200px;
+        }
+
+        .rightarea {
+            padding: 10px;
+            float: right;
+            width: 350px;
+            height: 200px;
+            font-size: 24px;
+            line-height: 40px;
+            color: #888;
+        }
+
+        .bold {
+            font-weight: bold;
+            font-size: 28px;
+            padding-bottom: 10px;
+            display: inline-block;
+            border-bottom: 1px dashed #ccc;
+            width: 370px;
+            color: #666;
+        }
+    </style>
+</head>
+<body style="position:fixed;">
+    <div id="container">
+        <div class="top" style="box-shadow: 0px 1px 10px #333;">2D Demos <span style="font-size:30px;">- 乐享飞扬</span></div>
+        <ul class="procon">
+            <li href="http://demos.egret.le-ad.cn/water/stickhero/index.html">
+                <div class="leftarea">
+                    <img class="thumbpic" src="http://h.fly-ad.cn/demos/2d/pics/stick.jpg" />
+                </div>
+                <div class="rightarea">
+                    <span class="bold">描述：</span><hr />
+                    1、长按铸造桥梁<br />
+                    2、掉落则失败
+                </div>
+            </li>
+            <li href="http://demos.egret.le-ad.cn/cx/game3/index.html">
+                <div class="leftarea">
+                    <img class="thumbpic" src="http://h.fly-ad.cn/demos/2d/pics/throught.jpg?v=2" />
+                </div>
+                <div class="rightarea">
+                    <span class="bold">描述：</span><hr />
+                    1、从上向下通过，+1分<br />
+                    2、获得血包，生命 +1<br />
+                    3、掉落页面底部，生命 -1
+                </div>
+            </li>
+        </ul>
+    </div>
+    <script>
+        var ww, wh;
+        $(function () {
+            ww = $(window).width();
+            wh = $(window).height();
+            $(".procon").css({ "height": wh - 220 + "px" });
+            $(".procon li").click(function () {
+                var href = $(this).attr("href");
+                window.location.href = href;
+            });
+        });
+    </script>
+</body>
+</html>

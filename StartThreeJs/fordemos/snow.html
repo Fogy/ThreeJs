@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>下雨与下雪(2d+3d场景混合)</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="target-densitydpi=640,width=640,user-scalable=no" name="viewport">
+    <meta content="no" name="apple-touch-fullscreen">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="no" name="apple-mobile-web-app-capable">
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="http://j.fly-ad.cn/3d/three.js"></script>
+    <script src="http://j.fly-ad.cn/jquery-1.8.2.min.js"></script>
+    <script src="http://j.fly-ad.cn/common-1.0.0.1/common.js"></script>
+
+    <!-- 辅助工具 开始 -->
+    <script src="http://j.fly-ad.cn/3d/stats.js"></script>
+    <script src="http://j.fly-ad.cn/3d/dat.gui.js"></script>
+    <!-- 辅助工具 结束 -->
+
+    <script src="http://j.fly-ad.cn/3d/common/threeJS-common.js"></script>
+    <link href="http://c.fly-ad.cn/common-1.0.0.css" rel="stylesheet" />
+</head>
+<body style="overflow:hidden;position:fixed;">
+    <div id="renderitem"></div>
+    <script>
+        var scene, camera, renderer;
+        var scene2d, camera2d;
+        var partisys;
+        var sprite;
+        $(function () {
+            x3d.CreateBasic();
+            scene = x3d.Settings.scene;
+            camera = x3d.Settings.camera;
+            renderer = x3d.Settings.renderer;
+
+            renderer.setClearColor(0x000000);
+
+            // 2d scene
+            scene2d = new THREE.Scene();
+            camera2d = x3d.CreateCamera(false);
+
+            // x3d.CreateAxes();
+
+            var spotlight = new THREE.SpotLight(0xffffff);
+            spotlight.position.set(-30, 40, 80);
+            scene.add(spotlight);
+
+            CreateRain(100);
+            CreateSprite(1);
+
+            camera.position.set(0, 0, 80);
+            camera.lookAt(scene.position);
+
+            $("#renderitem").append(renderer.domElement);
+            DoAnimate();
+        });
+        function DoAnimate() {
+            // do ani
+            //x3d.RotateSceneByWorldAres(0.01);
+            var vs = partisys.geometry.vertices;
+            vs.forEach(function (v) {
+                v.x = v.x - v.speedX;
+                v.y = v.y - v.speedY;
+                if (Math.abs(v.x) > 20) {
+                    v.x = 20;
+                }
+                if (v.y <= -40) {
+                    v.y = 40;
+                }
+            });
+
+            sprite.position.x = sprite.position.x - sprite.speedX;
+            if (Math.abs(sprite.position.x) > 38) {
+                ChangeTexture();
+                sprite.speedX *= -1;
+            }
+
+            renderer.render(scene, camera);
+            renderer.autoClear = false;
+            renderer.render(scene2d, camera2d);
+            requestAnimationFrame(DoAnimate);
+        }
+        // 创建雨滴
+        function CreateRain(num) {
+            var w = 40;
+            var h = 40;
+            var geo = new THREE.Geometry();
+            for (var i = 0; i < num; i++) {
+                var x = Math.random() * w - w / 2;
+                var y = Math.random() * 2 * h;
+                var z = Math.random() * 50;
+                var v = new THREE.Vector3(x, y, z);
+                v.speedX = 0.1 + Math.random() * 0.2;
+                v.speedY = (1 + Math.random() * 0.8) * 0.1;
+                geo.vertices.push(v);
+            }
+
+            var mat = new THREE.PointCloudMaterial({
+                size: 3,
+                color: 0xffffff,
+                sizeAttenuation: true,
+                map: THREE.ImageUtils.loadTexture('Images/particles/snowflake3.png'),
+                transparent: true,
+                opacity: 1,
+                blending: THREE.AdditiveBlending
+            });
+            partisys = new THREE.PointCloud(geo, mat);
+            partisys.frustumCulled = true;
+            partisys.sortParticles = true;
+            scene.add(partisys);
+        }
+
+        function CreateSprite(index) {
+            // index:第几个精灵图
+            var texture = THREE.ImageUtils.loadTexture("Images/particles/sprite-sheet.png");
+            var mat = new THREE.SpriteMaterial({
+                color: 0xffffff,
+                blending: THREE.AdditiveBlending,
+                transparent: true,
+                opcity: 1,
+                sizeAttenuation: false,
+                map: texture,
+                useScreenCoordinates: true
+            });
+            mat.map.offset.set(1 / 5 * index, 0);
+            mat.map.repeat.set(1 / 5, 1);
+            mat.depthWrite = false;
+
+            sprite = new THREE.Particle(mat);
+            sprite.scale.set(8, 8, 8);
+            sprite.position.set(0, -60, 0);
+            sprite.speedX = 0.5;
+            sprite.textureindex = index;
+            scene2d.add(sprite);
+        }
+        function ChangeTexture() {
+            sprite.material.map.offset.set(1 / 5 * ((++sprite.textureindex) % 5), 0);
+        }
+    </script>
+</body>
+</html>

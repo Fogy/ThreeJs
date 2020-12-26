@@ -1,0 +1,116 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>合并几何体</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="target-densitydpi=640,width=640,user-scalable=no" name="viewport">
+    <meta content="no" name="apple-touch-fullscreen">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="no" name="apple-mobile-web-app-capable">
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="../Js/three.js"></script>
+    <script src="http://j.fly-ad.cn/jquery-1.8.2.min.js"></script>
+    <script src="http://j.fly-ad.cn/common-1.0.0.1/common.js"></script>
+
+    <!-- 辅助工具 开始 -->
+    <script src="http://j.fly-ad.cn/3d/stats.js"></script>
+    <script src="http://j.fly-ad.cn/3d/dat.gui.js"></script>
+    <!-- 辅助工具 结束 -->
+
+    <script src="/Js/threeJS-common.js"></script>
+    <link href="http://c.fly-ad.cn/common-1.0.0.css" rel="stylesheet" />
+</head>
+<body style="overflow:hidden;">
+    <div id="renderitem"></div>
+    <div id="stype" style="width:220px;height:60px;line-height:60px;background-color:blue;color:white;font-size:28px;position:absolute;left:20px;top:20px;text-align:center;">当前为<span style="color:#4cff00;">合并</span>模式</div>
+    <script>
+        var scene, camera, renderer;
+        var cube;
+        var type = 0;
+        var meshcombine;
+        var tomove = [];
+        var createnum = 4000;
+        $(function () {
+            x3d.CreateBasic();
+            scene = x3d.Settings.scene;
+            camera = x3d.Settings.camera;
+            renderer = x3d.Settings.renderer;
+
+            x3d.CreateAxes();
+
+            CreateCombineCubes(createnum);
+            //CreateManySingleCube(createnum);
+
+            var cubegeo = new THREE.BoxGeometry(3, 3, 3);
+            var cubemat = new THREE.MeshLambertMaterial({ color: 0x00ffff });
+            cube = new THREE.Mesh(cubegeo, cubemat);
+            scene.add(cube);
+
+            var spotlight = new THREE.SpotLight(0xffffff);
+            spotlight.position.set(-30, 40, 80);
+            scene.add(spotlight);
+
+            camera.position.set(0, 40, 280);
+            camera.lookAt(scene.position);
+
+            $("#renderitem").append(renderer.domElement);
+            DoAnimate();
+
+            $("#stype").click(function () {
+                if (type == 0) {
+                    type = 1;
+                    $("#stype").html("当前为单个模式");
+                    
+                    scene.remove(meshcombine);
+                    CreateManySingleCube(createnum);
+                    console.log(scene.children.length);
+                } else {
+                    $("#stype").html("当前为<span style='color:#4cff00;'>合并</span>模式");
+                    type = 0;
+                    tomove.forEach(function (v) {
+                        scene.remove(v);
+                    });
+                    tomove = [];
+                    CreateCombineCubes(createnum);
+                    console.log(scene.children.length);
+                }
+            });
+        });
+        function DoAnimate() {
+            // do ani
+            x3d.RotateSceneByWorldAres(0.02);
+            cube.rotation.x += 0.01;
+            renderer.render(scene, camera);
+            requestAnimationFrame(DoAnimate);
+        }
+        function CreateCombineCubes(num) {
+            var geo = new THREE.Geometry();
+            var mergemat = new THREE.MeshNormalMaterial({ color: 0x876589 });
+            for (var i = 0; i < num; i++) {
+                ///THREE.GeometryUtils.merge(geo, addCube());
+                var m = addCube();
+                m.updateMatrix();
+                geo.merge(m.geometry, m.matrix);
+            }
+            meshcombine = new THREE.Mesh(geo, mergemat);
+            scene.add(meshcombine);
+        }
+        function CreateManySingleCube(num) {
+            for (var i = 0; i < num; i++) {
+                var mesh = addCube();
+                tomove.push(mesh);
+                scene.add(mesh);
+            }
+        }
+        function addCube() {
+            var mat = new THREE.MeshNormalMaterial({ color: 0xffffff });
+            var geo = new THREE.BoxGeometry(2, 2, 2);
+            var mesh = new THREE.Mesh(geo, mat);
+            mesh.position.set(Math.random() * 150 - 70, Math.random() * 220 - 110, 0);
+            return mesh;
+        }
+
+
+    </script>
+</body>
+</html>

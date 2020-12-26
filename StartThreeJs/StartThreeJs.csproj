@@ -1,0 +1,399 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7DB1EC00-B67B-4427-809F-B5758EFCE1FB}</ProjectGuid>
+    <ProjectTypeGuids>{E3E379DF-F4C6-4180-9B81-6769533ABE47};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>StartThreeJs</RootNamespace>
+    <AssemblyName>StartThreeJs</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Mvc.FixedDisplayModes, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.FixedDisplayModes.1.0.0\lib\net40\Microsoft.Web.Mvc.FixedDisplayModes.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Net.Http.2.0.30506.0\lib\net40\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.4.0.30506.0\lib\net40\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Net.Http.2.0.30506.0\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.4.0.30506.0\lib\net40\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.4.0.30506.0\lib\net40\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.4.0.30506.0\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.2.0.30506.0\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.2.0.30506.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Content Include="Assets\aspirin.pdb" />
+    <Content Include="Assets\assimp\drkwood2.jpg" />
+    <Content Include="Assets\assimp\engineflare1.jpg" />
+    <Content Include="Assets\assimp\SpiderTex.jpg" />
+    <Content Include="Assets\assimp\wal67ar_small.jpg" />
+    <Content Include="Assets\assimp\wal69ar_small.jpg" />
+    <Content Include="Assets\butterflywings.png" />
+    <Content Include="Assets\dae\tex\Grass.JPG" />
+    <Content Include="Assets\dae\tex\TrckGR.png" />
+    <Content Include="Assets\dae\tex\TruckR.png" />
+    <Content Include="Assets\misc_chair01.js" />
+    <Content Include="Assets\misc_chair01_col.jpg" />
+    <Content Include="Assets\models\caterham_maps\Finishes.Laminate.CarbonFiber.jpg" />
+    <Content Include="Assets\models\caterham_maps\gas tank.jpg" />
+    <Content Include="Assets\models\caterham_maps\license plate.jpg" />
+    <Content Include="Assets\models\caterham_maps\speed.jpg" />
+    <Content Include="Assets\models\caterham_maps\tire.jpg" />
+    <Content Include="Assets\obj\car2\bump.png" />
+    <Content Include="Assets\obj\car2\car_publish.2.js" />
+    <Content Include="Assets\obj\car2\headlight bump.png" />
+    <Content Include="Assets\obj\car2\headlight.png" />
+    <Content Include="Assets\obj\car2\Material Diffuse Color.png" />
+    <Content Include="Assets\obj\carx\road.jpg" />
+    <Content Include="Assets\obj\carx\MLE-opac.jpg" />
+    <Content Include="Assets\obj\carx\MLE-text.jpg" />
+    <Content Include="Assets\obj\carx\MLE-whee.jpg" />
+    <Content Include="Assets\obj\car2\testcar.js" />
+    <Content Include="Assets\obj\car2\TexturesCom_LandscapeArid0247_3_M.jpg" />
+    <Content Include="Assets\obj\car2\TexturesCom_MetalBare0154_2_S.jpg" />
+    <Content Include="Assets\obj\car2\TexturesCom_MetalPainted0207_1_S.jpg" />
+    <Content Include="Assets\obj\car2\TexturesCom_Rust0141_2_S.jpg" />
+    <Content Include="Assets\obj\car2\TexturesCom_RustMixed0090_2_S.jpg" />
+    <Content Include="Assets\obj\car2\TexturesCom_RustPaint0200_S.jpg" />
+    <Content Include="Assets\obj\car2\TexturesCom_RustPaint0226_9_S.jpg" />
+    <Content Include="Assets\obj\car2\TexturesCom_RustPaint0296_2_S.jpg" />
+    <Content Include="Assets\obj\car2\TexturesCom_RustPaint0317_1_seamless_S.jpg" />
+    <Content Include="Assets\obj\car2\toprak.png" />
+    <Content Include="Assets\obj\car2\tree.png" />
+    <Content Include="Assets\obj\car2\treebump.png" />
+    <Content Include="Assets\obj\car\abb.jpg" />
+    <Content Include="Assets\obj\car\square.jpg" />
+    <Content Include="Assets\obj\car\tire_d.jpg" />
+    <Content Include="Assets\obj\car\tire_dp_1.jpg" />
+    <Content Include="Assets\obj\car\Untitled-1.jpg" />
+    <Content Include="Assets\obj\car\viper.jpg" />
+    <Content Include="Assets\obj\dna\Bump.jpg" />
+    <Content Include="Assets\obj\windom\Map\backlight.jpg" />
+    <Content Include="Assets\obj\windom\Map\body_color.jpg" />
+    <Content Include="Assets\obj\windom\Map\fox.jpg" />
+    <Content Include="Assets\obj\windom\Map\Lakerem.jpg" />
+    <Content Include="Assets\obj\windom\Map\light2.jpg" />
+    <Content Include="Assets\obj\windom\Map\max.jpg" />
+    <Content Include="Assets\obj\windom\Map\ref6.bmp" />
+    <Content Include="Assets\obj\windom\Map\ref_white.gif" />
+    <Content Include="Assets\obj\windom\Map\sidelight.jpg" />
+    <Content Include="Assets\obj\windom\Map\tire_pattern.jpg" />
+    <Content Include="Assets\obj\windom\Map\win.jpg" />
+    <Content Include="Assets\planet\111.jpg" />
+    <Content Include="Assets\planet\Earth.jpg" />
+    <Content Include="Assets\planet\Earth.png" />
+    <Content Include="Assets\planet\EarthNormal.png" />
+    <Content Include="fordemos\2d\index.html" />
+    <Content Include="fordemos\all.html" />
+    <Content Include="fordemos\ball.html" />
+    <Content Include="fordemos\car.html" />
+    <Content Include="fordemos\fullscreen\index.html" />
+    <Content Include="fordemos\index.html" />
+    <Content Include="fordemos\policecar.html" />
+    <Content Include="fordemos\sky.html" />
+    <Content Include="fordemos\snow.html" />
+    <Content Include="fordemos\truck.html" />
+    <Content Include="Global.asax" />
+    <Content Include="html\base01.html" />
+    <Content Include="html\learn01.html" />
+    <Content Include="html\learn02.html" />
+    <Content Include="html\learn03.html" />
+    <Content Include="html\learn04.html" />
+    <Content Include="html\learn05.html" />
+    <Content Include="html\learn06.html" />
+    <Content Include="html\learn07.html" />
+    <Content Include="html\learn08.html" />
+    <Content Include="html\learn09.html" />
+    <Content Include="html\learn10.html" />
+    <Content Include="html\learn11.html" />
+    <Content Include="html\learn12.html" />
+    <Content Include="html\learn13.html" />
+    <Content Include="html\learn14.html" />
+    <Content Include="html\learn15-2.html" />
+    <Content Include="html\learn15.html" />
+    <Content Include="html\learn16.html" />
+    <Content Include="html\learn17.html" />
+    <Content Include="html\learn18.html" />
+    <Content Include="html\learn19.html" />
+    <Content Include="html\learn20.html" />
+    <Content Include="html\learn21.html" />
+    <Content Include="html\learn22.html" />
+    <Content Include="html\learn23.html" />
+    <Content Include="html\learnbase.html" />
+    <Content Include="html\transform.html" />
+    <Content Include="Images\ball.png" />
+    <Content Include="Images\fullscreen\fullscreen.png" />
+    <Content Include="Images\fullscreen\fullscreen2.png" />
+    <Content Include="Images\fullscreen\fullscreen3.png" />
+    <Content Include="Images\fullscreen\fullscreen4.png" />
+    <Content Include="Images\fullscreen\fullscreen5.png" />
+    <Content Include="Images\fullscreen\test.png" />
+    <Content Include="Images\particles\raindrop-1.png" />
+    <Content Include="Images\particles\raindrop-2.png" />
+    <Content Include="Images\particles\raindrop-3.png" />
+    <Content Include="Images\particles\snowflake1.png" />
+    <Content Include="Images\particles\snowflake2.png" />
+    <Content Include="Images\particles\snowflake3.png" />
+    <Content Include="Images\particles\snowflake4.png" />
+    <Content Include="Images\particles\snowflake5.png" />
+    <Content Include="Images\particles\sprite-sheet.png" />
+    <Content Include="Images\particles\two_drops.jpg" />
+    <Content Include="Images\planebg.jpg" />
+    <Content Include="Js\jquery-1.8.2.min.js" />
+    <Content Include="Js\libs\AssimpJSONLoader.js" />
+    <Content Include="Js\libs\AWDLoader.js" />
+    <Content Include="Js\libs\BabylonLoader.js" />
+    <Content Include="Js\libs\CanvasRenderer.js" />
+    <Content Include="Js\libs\ColladaLoader.js" />
+    <Content Include="Js\libs\ConvexGeometry.js" />
+    <Content Include="Js\libs\ctm.js" />
+    <Content Include="Js\libs\CTMLoader.js" />
+    <Content Include="Js\libs\CTMWorker.js" />
+    <Content Include="Js\libs\d3-threeD.js" />
+    <Content Include="Js\libs\fonts\bitstream_vera_sans_mono_roman.typeface.js" />
+    <Content Include="Js\libs\CSS3DRenderer.js" />
+    <Content Include="Js\libs\fonts\helvetiker_bold.typeface.js" />
+    <Content Include="Js\libs\fonts\helvetiker_regular.typeface.js" />
+    <Content Include="Js\libs\GeometryExporter.js" />
+    <Content Include="Js\libs\lzma.js" />
+    <Content Include="Js\libs\MTLLoader.js" />
+    <Content Include="Js\libs\OBJLoader.js" />
+    <Content Include="Js\libs\OBJMTLLoader.js" />
+    <Content Include="Js\libs\PDBLoader.js" />
+    <Content Include="Js\libs\PLYLoader.js" />
+    <Content Include="Js\libs\Projector.js" />
+    <Content Include="Js\libs\ParametricGeometries.js" />
+    <Content Include="Js\libs\SceneExporter.js" />
+    <Content Include="Js\libs\SceneLoader.js" />
+    <Content Include="Js\libs\STLLoader.js" />
+    <Content Include="Js\libs\ThreeBSP.js" />
+    <Content Include="Js\objloader\DDSLoader.js" />
+    <Content Include="Js\objloader\MTLLoader.js" />
+    <Content Include="Js\objloader\OBJLoader.js" />
+    <Content Include="Js\objloader\three.js" />
+    <Content Include="Js\three.min.js" />
+    <Content Include="Js\transform\tween.min.js" />
+    <Content Include="Js\tween.min.js" />
+    <Content Include="Js\libs\VRMLLoader.js" />
+    <Content Include="Js\libs\VTKLoader.js" />
+    <Content Include="Js\three.js" />
+    <Content Include="Js\ThreeCanvas.js" />
+    <Content Include="Js\threeJS-common.js" />
+    <Content Include="project\ball.html" />
+    <Content Include="Web.config" />
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Models\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Home\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\pinecone.mtl" />
+    <Content Include="Assets\pinecone.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\butterfly.mtl" />
+    <Content Include="Assets\butterfly.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\dae\Truck_dae.dae" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\SolidHead_2_lowPoly_42k.stl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\auditt_wheel.ctm" />
+    <Content Include="Assets\moai_fixed.vtk" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\test.ply" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\awd\PolarBear.awd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\assimp\spider.obj.assimp.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\tree.wrl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\skull.babylon" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\models\Catherham_Seven_Sigma_OBJ.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\obj\dna\DNA.mtl" />
+    <Content Include="Assets\obj\dna\DNA.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\obj\car\srt10.mtl" />
+    <Content Include="Assets\obj\car\srt10.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\obj\windom\WindomObj.mtl" />
+    <Content Include="Assets\obj\windom\WindomObj.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\obj\windom\Map\Thumbs.db" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\obj\car2\car_publish.2.obj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\obj\carx\untitled.mtl" />
+    <Content Include="Assets\obj\carx\untitled.obj" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>60783</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:60783/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

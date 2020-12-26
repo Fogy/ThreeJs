@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>Index</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="target-densitydpi=640,width=640,user-scalable=no" name="viewport">
+    <meta content="no" name="apple-touch-fullscreen">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="no" name="apple-mobile-web-app-capable">
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="../Js/three.js"></script>
+    <script src="http://j.fly-ad.cn/jquery-1.8.2.min.js"></script>
+    <script src="http://j.fly-ad.cn/common-1.0.0.1/common.js"></script>
+
+    <!-- 辅助工具 开始 -->
+    <script src="http://j.fly-ad.cn/3d/stats.js"></script>
+    <script src="http://j.fly-ad.cn/3d/dat.gui.js"></script>
+    <!-- 辅助工具 结束 -->
+
+    <script src="/Js/threeJS-common.js"></script>
+    <link href="http://c.fly-ad.cn/common-1.0.0.css" rel="stylesheet" />
+</head>
+<body style="overflow:hidden;">
+    <div id="renderitem"></div>
+
+    <script>
+        var renderer, camera, scene;
+        var camera_radius;
+        var rotatespeed = 0.01;
+        var colors = [];
+        $(function () {
+            x3d.CreateBasic();
+            renderer = x3d.Settings.renderer;
+            camera = x3d.Settings.camera;
+            scene = x3d.Settings.scene;
+
+            x3d.CreateAxes(scene);
+
+            var planeGeo = new THREE.PlaneBufferGeometry(80, 60);
+            var planeMat = new THREE.MeshBasicMaterial({ color: 0xCCCCCC });
+            var plane = new THREE.Mesh(planeGeo, planeMat);
+            plane.rotation.x = -Math.PI / 2;
+
+            scene.add(plane);
+
+            var cubeGeo = new THREE.BoxGeometry(4, 4, 4);
+            var cubeMat = new THREE.MeshLambertMaterial({ color: 0x99ddaa });
+            var cube = new THREE.Mesh(cubeGeo, cubeMat);
+            cube.position.set(10, 2, 9);
+            scene.add(cube);
+
+            camera.position.set(-40, 30, 80);
+            camera.lookAt(scene.position);
+
+            var spotlight = new THREE.SpotLight({ color: 0xff0000 });
+            scene.add(spotlight);
+            spotlight.position.set(10, 60, 80);
+
+            // line
+            var points = gosper(4, 20);
+            var lineMat = new THREE.LineBasicMaterial({ opacity: 1.0, linewidth: 2, vertexColors: true });
+            var lineGeo = new THREE.Geometry();
+            var i = 0;
+            points.forEach(function (e) {
+                lineGeo.vertices.push(new THREE.Vector3(e.x, e.y, e.z));
+                colors[i] = new THREE.Color(0xffffff);
+                colors[i].setHSL(e.x / 100 + 0.5, e.y * 20 / 300, 0.8);
+                i++;
+            });
+            lineGeo.colors = colors;
+            var line = new THREE.Line(lineGeo, lineMat);
+
+            line.position.set(-20, 10, 10);
+            scene.add(line);
+
+            //dashline
+            var dash_colors = [];
+            var points_dashed = gosper(4, 20);
+            var dashlineGeo = new THREE.Geometry();
+            var dashlineMat = new THREE.LineDashedMaterial({ vertexColors: true, gapSize: 1, dashSize: 10, scale: 0.1 });
+            var j = 0;
+            points_dashed.forEach(function (e) {
+                dash_colors[j] = new THREE.Color(0xffffff);
+                dash_colors[j].setHSL(e.x / 100 + 0.5, e.y * 20 / 300, 0.8);
+                dashlineGeo.vertices.push(new THREE.Vector3(e.x, e.y, e.z));
+                j++;
+            });
+            dashlineGeo.colors = dash_colors;
+            var dashedline = new THREE.Line(dashlineGeo, dashlineMat);
+            dashedline.position.set(10, 10, 10);
+            dashlineGeo.computeLineDistances();
+            scene.add(dashedline);
+
+            // straight line
+            var lineGeo = new THREE.Geometry();
+            lineGeo.vertices.push(new THREE.Vector3(2, 2, 3));
+            lineGeo.vertices.push(new THREE.Vector3(12, 22, 33));
+
+            camera_radius = Math.sqrt(Math.abs(camera.position.x) * Math.abs(camera.position.x) + Math.abs(camera.position.z) * Math.abs(camera.position.z));
+            $('#renderitem').append(renderer.domElement);
+            DoAnimate();
+        });
+        function DoAnimate() {
+            rotatespeed += 0.01;
+            // 若绕y轴旋转,则设置相机x,z轴的位置，最大长度为 x，z的斜边长度
+            camera.position.x = Math.sin(rotatespeed) * camera_radius;
+            camera.position.z = Math.cos(rotatespeed) * camera_radius;
+            camera.lookAt(scene.position);
+            renderer.render(scene, camera);
+            requestAnimationFrame(DoAnimate);
+        }
+        function gosper(a, b) {
+
+            var turtle = [0, 0, 0];
+            var points = [];
+            var count = 0;
+
+            rg(a, b, turtle);
+
+
+            return points;
+
+            function rt(x) {
+                turtle[2] += x;
+            }
+
+            function lt(x) {
+                turtle[2] -= x;
+            }
+
+            function fd(dist) {
+                //                ctx.beginPath();
+                points.push({ x: turtle[0], y: turtle[1], z: Math.sin(count) * 5 });
+                //                ctx.moveTo(turtle[0], turtle[1]);
+
+                var dir = turtle[2] * (Math.PI / 180);
+                turtle[0] += Math.cos(dir) * dist;
+                turtle[1] += Math.sin(dir) * dist;
+
+                points.push({ x: turtle[0], y: turtle[1], z: Math.sin(count) * 5 });
+                //                ctx.lineTo(turtle[0], turtle[1]);
+                //                ctx.stroke();
+
+            }
+
+            function rg(st, ln, turtle) {
+
+                st--;
+                ln = ln / 2.6457;
+                if (st > 0) {
+                    //                    ctx.strokeStyle = '#111';
+                    rg(st, ln, turtle);
+                    rt(60);
+                    gl(st, ln, turtle);
+                    rt(120);
+                    gl(st, ln, turtle);
+                    lt(60);
+                    rg(st, ln, turtle);
+                    lt(120);
+                    rg(st, ln, turtle);
+                    rg(st, ln, turtle);
+                    lt(60);
+                    gl(st, ln, turtle);
+                    rt(60);
+                }
+                if (st == 0) {
+                    fd(ln);
+                    rt(60);
+                    fd(ln);
+                    rt(120);
+                    fd(ln);
+                    lt(60);
+                    fd(ln);
+                    lt(120);
+                    fd(ln);
+                    fd(ln);
+                    lt(60);
+                    fd(ln);
+                    rt(60)
+                }
+            }
+
+            function gl(st, ln, turtle) {
+                st--;
+                ln = ln / 2.6457;
+                if (st > 0) {
+                    //                    ctx.strokeStyle = '#555';
+                    lt(60);
+                    rg(st, ln, turtle);
+                    rt(60);
+                    gl(st, ln, turtle);
+                    gl(st, ln, turtle);
+                    rt(120);
+                    gl(st, ln, turtle);
+                    rt(60);
+                    rg(st, ln, turtle);
+                    lt(120);
+                    rg(st, ln, turtle);
+                    lt(60);
+                    gl(st, ln, turtle);
+                }
+                if (st == 0) {
+                    lt(60);
+                    fd(ln);
+                    rt(60);
+                    fd(ln);
+                    fd(ln);
+                    rt(120);
+                    fd(ln);
+                    rt(60);
+                    fd(ln);
+                    lt(120);
+                    fd(ln);
+                    lt(60);
+                    fd(ln);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

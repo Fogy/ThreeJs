@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>图形运算</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="target-densitydpi=640,width=640,user-scalable=no" name="viewport">
+    <meta content="no" name="apple-touch-fullscreen">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="no" name="apple-mobile-web-app-capable">
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="../Js/three.js"></script>
+    <script src="http://j.fly-ad.cn/jquery-1.8.2.min.js"></script>
+    <script src="http://j.fly-ad.cn/common-1.0.0.1/common.js"></script>
+
+    <!-- 辅助工具 开始 -->
+    <script src="http://j.fly-ad.cn/3d/stats.js"></script>
+    <script src="http://j.fly-ad.cn/3d/dat.gui.js"></script>
+    <!-- 辅助工具 结束 -->
+
+    <script src="/Js/threeJS-common.js"></script>
+    <link href="http://c.fly-ad.cn/common-1.0.0.css" rel="stylesheet" />
+
+    <!-- 二元运算库 -->
+    <script src="../Js/libs/ThreeBSP.js"></script>
+</head>
+<body style="overflow:hidden;">
+    <div id="renderitem"></div>
+    <script>
+        var scene, camera, renderer;
+        var cube, cubeBSP;
+        var mesh1, mesh2, mesh1BSP, mesh2BSP;
+        var resultmesh, resultBSP;
+        var resultmesh2, resultBSP2;
+        $(function () {
+            x3d.CreateBasic();
+            scene = x3d.Settings.scene;
+            camera = x3d.Settings.camera;
+            renderer = x3d.Settings.renderer;
+
+            x3d.CreateAxes();
+
+
+
+
+            // 运算1
+            var sphere_g = new THREE.SphereGeometry(5, 20, 20);
+            var sphere_m = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
+            mesh1 = new THREE.Mesh(sphere_g, sphere_m);
+            mesh1.position.set(10, 10, 10);
+            mesh1BSP = new ThreeBSP(mesh1);
+
+            var sphere2_g = new THREE.SphereGeometry(5, 20, 20);
+            var sphere2_m = new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true });
+            mesh2 = new THREE.Mesh(sphere2_g, sphere2_m);
+            mesh2.position.set(12, 12, 12);
+            mesh2BSP = new ThreeBSP(mesh2);
+
+            resultBSP = mesh1BSP.subtract(mesh2BSP);
+            resultmesh = resultBSP.toMesh();
+            //resultmesh.material = new THREE.MeshNormalMaterial({ color: 0xffffff });
+            //resultmesh.material.shading = THREE.SmoothShading;
+            resultmesh.geometry.computeFaceNormals();
+            resultmesh.geometry.computeVertexNormals();
+            scene.add(resultmesh);
+
+            // 运算2
+            var cubegeo = new THREE.BoxGeometry(8, 8, 8);
+            var cubemat = new THREE.MeshNormalMaterial({ color: 0x00ffff, wireframe: false });
+            cube = new THREE.Mesh(cubegeo, cubemat);
+            cube.position.set(10, 10, 10);
+            cubeBSP = new ThreeBSP(cube);
+            resultBSP2 = cubeBSP.subtract(mesh1BSP);
+            resultmesh2 = resultBSP2.toMesh();
+            resultmesh2.geometry.computeFaceNormals();
+            resultmesh2.geometry.computeVertexNormals();
+            scene.add(resultmesh2);
+            resultmesh2.position.set(22, 22, 22);
+
+            var spotlight = new THREE.SpotLight(0xffffff);
+            spotlight.position.set(-30, 40, 80);
+            scene.add(spotlight);
+
+            camera.position.set(30, 40, 80);
+            camera.lookAt(scene.position);
+
+            $("#renderitem").append(renderer.domElement);
+            DoAnimate();
+        });
+        function DoAnimate() {
+            // do ani
+            // 不要在动画执行过程中处理图形的运算，由于计算量太大，会导致动画停滞
+            x3d.RotateSceneByWorldAres(0.01);
+            cube.rotation.x += 0.01;
+            renderer.render(scene, camera);
+            requestAnimationFrame(DoAnimate);
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>OBJ MTL Loader</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="target-densitydpi=640,width=640,user-scalable=no" name="viewport">
+    <meta content="no" name="apple-touch-fullscreen">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="no" name="apple-mobile-web-app-capable">
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="../Js/three.js"></script>
+    <script src="http://j.fly-ad.cn/jquery-1.8.2.min.js"></script>
+    <script src="http://j.fly-ad.cn/common-1.0.0.1/common.js"></script>
+
+    <!-- 辅助工具 开始 -->
+    <script src="http://j.fly-ad.cn/3d/stats.js"></script>
+    <script src="http://j.fly-ad.cn/3d/dat.gui.js"></script>
+    <!-- 辅助工具 结束 -->
+
+    <script src="/Js/threeJS-common.js"></script>
+    <link href="http://c.fly-ad.cn/common-1.0.0.css" rel="stylesheet" />
+
+    <!-- 工具库 -->
+    <script src="../Js/libs/MTLLoader.js"></script>
+    <script src="../Js/libs/OBJMTLLoader.js"></script>
+</head>
+<body style="overflow:hidden;">
+    <div id="renderitem"></div>
+    <script>
+        var scene, camera, renderer;
+        var cube;
+        var objloadmesh, butterfly;
+        var cctrl;
+        $(function () {
+            x3d.CreateBasic();
+            scene = x3d.Settings.scene;
+            camera = x3d.Settings.camera;
+            renderer = x3d.Settings.renderer;
+
+            x3d.CreateAxes();
+
+            //var cubegeo = new THREE.BoxGeometry(3, 3, 3);
+            //var cubemat = new THREE.MeshLambertMaterial({ color: 0x00ffff });
+            //cube = new THREE.Mesh(cubegeo, cubemat);
+            //scene.add(cube);
+
+            var spotlight = new THREE.SpotLight(0xffffff, 2);
+            spotlight.position.set(-30, 40, 80);
+            scene.add(spotlight);
+
+            var spotlight2 = new THREE.SpotLight(0xffffff, 2);
+            spotlight2.position.set(30, 40, 80);
+            scene.add(spotlight2);
+
+            x3d.LoadModelFromOBJandMTL("../Assets/butterfly.obj", "../Assets/butterfly.mtl", function (o) {
+                butterfly = o;
+
+                var wing1 = butterfly.children[4].children[0];
+                var wing2 = butterfly.children[5].children[0];
+
+                //wing1.material.alphaTest = 0.5;
+                wing1.material.opacity = 0.6;
+                wing1.material.transparent = true;
+                wing1.material.side = THREE.DoubleSide;
+
+                //wing2.material.alphaTest = 0.5;
+                wing2.material.opacity = 0.6;
+                wing2.material.transparent = true;
+                wing2.material.side = THREE.DoubleSide;
+
+                //butterfly.rotation.x = 0.2;
+                //butterfly.rotation.y = -1.3;
+
+                butterfly.scale.set(140, 140, 140);
+            })
+
+
+            camera.position.set(30, 40, 80);
+
+            //  系统初始化时，需要摄像机注视一个点,在这个基础上，若有摄像机的注视点调整，则可向那个物体移动
+            camera.lookAt(scene.position);
+
+
+            // 3秒后转移运动方向
+            setTimeout(function () {
+                cctrl = x3d.CameraControls(scene.position);
+                cctrl.speed = -0.1;
+                cctrl.minDistance = -12;
+                cctrl.maxDistance = 42;
+            }, 3000);
+
+            // 5秒后再次转移运动方向
+            setTimeout(function () {
+                cctrl = x3d.CameraControls(butterfly.position);
+                cctrl.speed = -0.1;
+                cctrl.minDistance = -12;
+                cctrl.maxDistance = 42;
+            }, 5000);
+
+            $("#renderitem").append(renderer.domElement);
+            DoAnimate();
+        });
+        function DoAnimate() {
+            // do ani
+            x3d.RotateSceneByWorldAres(0.01);
+            if (objloadmesh) {
+                if (cctrl.speed < 0 && cctrl.l <= -12) {
+                    cctrl.speed = 0.1;
+                }
+                if (cctrl.speed > 0 && cctrl.l >= 42) {
+                    cctrl.speed = -0.1;
+                }
+                cctrl.update();
+                //camera.lookAt();
+            }
+
+            //cube.rotation.x += 0.01;
+            renderer.render(scene, camera);
+            requestAnimationFrame(DoAnimate);
+        }
+    </script>
+</body>
+</html>

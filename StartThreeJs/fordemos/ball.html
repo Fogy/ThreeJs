@@ -1,0 +1,169 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <title>曲线运动</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta content="target-densitydpi=640,width=640,user-scalable=no" name="viewport">
+    <meta content="no" name="apple-touch-fullscreen">
+    <meta name="format-detection" content="telephone=no">
+    <meta content="no" name="apple-mobile-web-app-capable">
+    <link href="/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <script src="http://j.fly-ad.cn/3d/three.js"></script>
+    <script src="http://j.fly-ad.cn/jquery-1.8.2.min.js"></script>
+    <script src="http://j.fly-ad.cn/common-1.0.0.1/common.js"></script>
+
+    <script src="http://j.fly-ad.cn/3d/common/threeJS-common.js"></script>
+    <link href="http://c.fly-ad.cn/common-1.0.0.css" rel="stylesheet" />
+
+    <!-- 动画库 -->
+    <script src="http://j.fly-ad.cn/3d/tween.min.js"></script>
+    <style>
+        .btn {
+            width: 120px;
+            height: 50px;
+            background-color: white;
+            color: red;
+            font-weight: bold;
+            position: absolute;
+            z-index: 100;
+            bottom: 20px;
+            border-radius: 10px;
+            line-height: 50px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body style="overflow:hidden;position:fixed;">
+    <div id="renderitem"></div>
+    <div id="shoot" class="btn" style=" left: 100px;">发射小球</div>
+    <div id="fardis" class="btn" style=" left: 250px;">远观</div>
+    <div id="neerdis" class="btn" style=" left: 400px;">近观</div>
+    <script>
+        var scene, camera, renderer;
+        var plane, ball;
+        var tween, tweenback, initpoint;
+        var cctrl;
+        var sphere;
+        var group;
+        var cameratrol;
+        var camerapoint = { x: 0, y: 0, z: 0 };
+        $(function () {
+
+            x3d.CreateBasic();
+            scene = x3d.Settings.scene;
+            camera = x3d.Settings.camera;
+            renderer = x3d.Settings.renderer;
+            renderer.setClearColor(0x0000);
+            renderer.shadowMapEnabled = true;
+
+            //x3d.CreateAxes();
+
+            var spheregeo = new THREE.SphereGeometry(100, 60, 60);
+            var spheremat = new THREE.MeshNormalMaterial({ color: 0xffffff });
+            sphere = new THREE.Mesh(spheregeo, spheremat);
+            spheremat.side = THREE.DoubleSide;
+            scene.add(sphere);
+
+            // 平面
+            var planegeo = new THREE.PlaneBufferGeometry(20, 33);
+            var texture = THREE.ImageUtils.loadTexture("images/planebg.jpg");
+            var planemat = new THREE.MeshPhongMaterial({
+                color: 0xffffff,
+                map: texture
+            });
+
+            plane = new THREE.Mesh(planegeo, planemat);
+
+            plane.receiveShadow = true;
+            planemat.transparent = true;
+            planemat.opacity = 0.5;
+
+            // 小球
+            var sphoeregeo = new THREE.SphereGeometry(0.3, 20, 20);
+            var textureball = THREE.ImageUtils.loadTexture("images/ball.png");
+            var shperemat = new THREE.MeshPhongMaterial({
+                color: 0xffffff, //0xa2c903
+                map: textureball,
+            });
+
+            ball = new THREE.Mesh(sphoeregeo, shperemat);
+            ball.position.set(0, -10, 0);
+
+            ball.castShadow = true;
+
+            group = new THREE.Object3D();
+            group.add(plane);
+            group.add(ball);
+            scene.add(group);
+
+            var spotlight = new THREE.SpotLight(0xffffff);
+            spotlight.position.set(-30, 40, 80);
+            scene.add(spotlight);
+            spotlight.castShadow = true;
+
+            camera.position.set(0, -10, 5);
+            camera.lookAt(scene.position);
+
+            cctrl = x3d.RotateSceneByUserForMobile();
+            cameratrol = x3d.CameraControls(scene.position, true);
+            cameratrol.speed = 1;
+            cameratrol.minDistance = 30;
+            cameratrol.maxDistance = 80;
+            //cctrl.allowup = false;
+
+            $("#renderitem").append(renderer.domElement);
+            DoAnimate();
+            EventBinder();
+        });
+        function EventBinder() {
+            $("#shoot").on("touchend", function () {
+
+                var x = Math.cos(Math.random() * Math.PI) * 5;
+                var y = Math.sin(Math.random() * Math.PI * 2) * 4 + 22;
+                Move(x, y, 10, 2500);
+            });
+            $("#fardis").on("touchend", function () {
+                //camera.position.set(0, -80, 25);
+                cameratrol.speed = 1;
+            });
+            $("#neerdis").on("touchend", function () {
+                //camera.position.set(0, -30, 25);
+                cameratrol.speed = -1;
+            });
+        }
+        function DoAnimate() {
+            // do ani
+            TWEEN.update();
+            cctrl.update();
+            cameratrol.update();
+            ball.rotation.x += 1;
+            ball.rotation.z += 1;
+            ball.rotation.y += 1;
+            group.rotation.z += 0.005;
+            sphere.rotation.y += 0.1;
+            renderer.render(scene, camera);
+            requestAnimationFrame(DoAnimate);
+        }
+        // endX: x轴落点偏移量
+        // moveY: y轴移动距离
+        // flyheight: 小球飞行最大高度，建议20
+        // time: 飞行时间,单位ms
+        function Move(endX, moveY, flyheight, time) {
+            initpoint = { angelX: 0, ty: 0, angelY: 0 };
+            tween = new TWEEN.Tween(initpoint).to({ angelX: 0.5, ty: parseInt(moveY / 2), angelY: 1 }, time).easing(TWEEN.Easing.Linear.None);
+            tweenback = new TWEEN.Tween(initpoint).to({ angelX: 1, ty: moveY, angelY: 0 }, time).easing(TWEEN.Easing.Linear.None);
+            tween.onUpdate(spheremove);
+            tweenback.onUpdate(spheremove);
+            tween.chain(tweenback);
+
+            tween.start();
+            function spheremove() {
+                var x = this.angelX * endX;
+                var y = this.ty - 10;
+                var z = Math.sin(Math.PI / 2 * this.angelY) * flyheight;
+                ball.position.set(x, y, z);
+            }
+        }
+    </script>
+</body>
+</html>
